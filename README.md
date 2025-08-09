@@ -30,15 +30,25 @@ This project serves as a starting point for vibe-coded projects, providing:
 
 ```bash
 # Clone this repository
-git clone https://github.com/your-username/vibe-starter.git your-project-name
+git clone https://github.com/ChromaticFlint/vibe-starter.git your-project-name
 cd your-project-name
+
+# Clean setup for new project
+rm -rf .git
+git init
+
+# Update project name
+sed -i 's/vibe-starter/your-project-name/g' package.json
+sed -i 's/Vibe Starter/Your Project Name/g' README.md
 
 # Install dependencies
 npm install
 
-# Start development server
-npm run dev
+# Verify setup works
+npm run pre-commit
 ```
+
+**🤖 For AI Agents**: See `AI-SETUP-GUIDE.md` for optimized setup workflow
 
 ### 2. Plan Your Project
 

@@ -38,15 +38,24 @@ npm install
 ### Phase 2: Project Configuration (< 60 seconds)
 
 #### ✅ **Step 4: Generate Project Config**
+
+**Option A: Quick Setup (Recommended for fast start)**
 ```bash
-# Run interactive project generator
+# 5 questions, 2 minutes
+npm run setup
+```
+
+**Option B: Full Setup (Comprehensive)**
+```bash
+# Complete questionnaire, 5-10 minutes
 npm run generate
 ```
 
 **AI Agent Notes:**
-- This creates `vibe-project.config.json` with project-specific context
+- Both create `vibe-project.config.json` with project-specific context
 - Updates `.vibe/ai-context.md` with tailored guidelines
-- Provides all the context needed for intelligent development
+- Quick setup provides essential context, full setup provides comprehensive details
+- Choose based on project complexity and time available
 
 #### ✅ **Step 5: Verify Setup**
 ```bash

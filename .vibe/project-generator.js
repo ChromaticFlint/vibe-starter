@@ -7,6 +7,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import readline from 'readline';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -15,6 +16,10 @@ class VibeProjectGenerator {
   constructor() {
     this.configPath = path.join(process.cwd(), 'vibe-project.config.json');
     this.aiContextPath = path.join(process.cwd(), '.vibe', 'ai-context.md');
+    this.rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
   }
 
   /**
@@ -36,20 +41,120 @@ class VibeProjectGenerator {
   }
 
   async askQuestions() {
-    // This would use a CLI library like inquirer in a real implementation
-    return {
-      name: 'My Awesome Project',
-      type: 'web-app',
-      domain: 'productivity',
-      description: 'A tool that helps users be more productive',
-      primaryUsers: 'Busy professionals and students',
-      technicalLevel: 'intermediate',
-      coreFeatures: [
-        { name: 'Task Management', priority: 'critical', complexity: 'moderate' },
-        { name: 'Time Tracking', priority: 'high', complexity: 'simple' },
-        { name: 'Reporting', priority: 'medium', complexity: 'complex' }
-      ]
-    };
+    console.log('\n📋 Let\'s define your project! Answer these questions to generate AI-optimized config:\n');
+
+    const answers = {};
+
+    // Project basics
+    answers.name = await this.ask('🎯 Project name: ');
+    answers.type = await this.askChoice('📱 Project type:', [
+      'web-app', 'tool', 'dashboard', 'game', 'api', 'mobile-app'
+    ]);
+    answers.domain = await this.askChoice('🏷️  Domain/theme:', [
+      'productivity', 'entertainment', 'education', 'ecommerce', 'healthcare', 'finance', 'other'
+    ]);
+    answers.description = await this.ask('📝 One sentence description: ');
+
+    // Audience
+    console.log('\n👥 Target Audience:');
+    answers.primaryUsers = await this.ask('Who will use this? (demographics, roles): ');
+    answers.technicalLevel = await this.askChoice('Their technical level:', [
+      'beginner', 'intermediate', 'expert'
+    ]);
+    answers.usageFrequency = await this.askChoice('How often will they use it:', [
+      'daily', 'weekly', 'monthly', 'occasional'
+    ]);
+    answers.devices = await this.askMultiple('Primary devices:', [
+      'desktop', 'mobile', 'tablet'
+    ]);
+
+    // Core features
+    console.log('\n🚀 Core Features:');
+    answers.coreFeatures = await this.askFeatures();
+
+    // Technical requirements
+    console.log('\n⚙️  Technical Requirements:');
+    answers.needsAuth = await this.askYesNo('Need user accounts/login?');
+    answers.needsRealtime = await this.askYesNo('Need real-time features? (live updates, chat, etc.)');
+    answers.needsOffline = await this.askYesNo('Need to work offline?');
+    answers.integrations = await this.ask('Any specific integrations? (APIs, services - or press Enter to skip): ');
+
+    // Business context
+    console.log('\n💡 Business Context:');
+    answers.businessLogic = await this.ask('Key business rules or constraints: ');
+    answers.userWorkflows = await this.ask('Typical user workflow (what do users do step by step): ');
+    answers.priorities = await this.ask('What matters most? (performance, features, simplicity, etc.): ');
+
+    this.rl.close();
+    return answers;
+  }
+
+  async ask(question) {
+    return new Promise((resolve) => {
+      this.rl.question(question, (answer) => {
+        resolve(answer.trim());
+      });
+    });
+  }
+
+  async askChoice(question, choices) {
+    console.log(`${question}`);
+    choices.forEach((choice, index) => {
+      console.log(`  ${index + 1}. ${choice}`);
+    });
+
+    const answer = await this.ask('Choose (1-' + choices.length + '): ');
+    const index = parseInt(answer) - 1;
+
+    if (index >= 0 && index < choices.length) {
+      return choices[index];
+    } else {
+      console.log('Invalid choice, using first option.');
+      return choices[0];
+    }
+  }
+
+  async askYesNo(question) {
+    const answer = await this.ask(`${question} (y/n): `);
+    return answer.toLowerCase().startsWith('y');
+  }
+
+  async askMultiple(question, choices) {
+    console.log(`${question} (select multiple by number, separated by commas)`);
+    choices.forEach((choice, index) => {
+      console.log(`  ${index + 1}. ${choice}`);
+    });
+
+    const answer = await this.ask('Choose (e.g., 1,2): ');
+    const indices = answer.split(',').map(s => parseInt(s.trim()) - 1);
+
+    return indices
+      .filter(i => i >= 0 && i < choices.length)
+      .map(i => choices[i]);
+  }
+
+  async askFeatures() {
+    const features = [];
+    console.log('Enter your core features (press Enter with empty input to finish):');
+
+    while (true) {
+      const name = await this.ask(`Feature ${features.length + 1} name (or Enter to finish): `);
+      if (!name) break;
+
+      const priority = await this.askChoice('Priority:', ['critical', 'high', 'medium', 'low']);
+      const complexity = await this.askChoice('Complexity:', ['simple', 'moderate', 'complex']);
+
+      features.push({ name, priority, complexity });
+
+      if (features.length >= 5) {
+        console.log('Maximum 5 core features recommended.');
+        break;
+      }
+    }
+
+    return features.length > 0 ? features : [
+      { name: 'Main Feature', priority: 'critical', complexity: 'moderate' }
+    ];
   }
 
   generateConfig(answers) {
@@ -69,8 +174,8 @@ class VibeProjectGenerator {
         "primary": {
           "demographics": answers.primaryUsers,
           "technicalLevel": answers.technicalLevel,
-          "devices": ["desktop", "mobile"],
-          "usageFrequency": "daily"
+          "devices": answers.devices.length > 0 ? answers.devices : ["desktop", "mobile"],
+          "usageFrequency": answers.usageFrequency
         }
       },
       "features": {
@@ -92,13 +197,20 @@ class VibeProjectGenerator {
           "stateManagement": "zustand"
         },
         "requirements": {
-          "authentication": false,
-          "realtime": false,
-          "offline": false,
-          "mobile": true,
-          "pwa": false,
+          "authentication": answers.needsAuth,
+          "realtime": answers.needsRealtime,
+          "offline": answers.needsOffline,
+          "mobile": answers.devices.includes('mobile'),
+          "pwa": answers.needsOffline,
           "seo": true
-        }
+        },
+        "integrations": answers.integrations ? [
+          {
+            "service": answers.integrations,
+            "purpose": "As specified by user",
+            "required": true
+          }
+        ] : []
       },
       "testing": {
         "coverage": { "target": 80, "critical": 95 },
@@ -107,10 +219,15 @@ class VibeProjectGenerator {
       },
       "ai": {
         "context": {
-          "businessLogic": "Focus on user productivity and efficiency",
-          "userWorkflows": "Users create tasks, track time, generate reports",
-          "constraints": "Must be fast, accessible, and mobile-friendly",
-          "priorities": "User experience and performance are critical"
+          "businessLogic": answers.businessLogic || "Focus on user needs and efficiency",
+          "userWorkflows": answers.userWorkflows || "Standard user interaction patterns",
+          "constraints": this.generateConstraints(answers),
+          "priorities": answers.priorities || "User experience and performance are critical"
+        },
+        "prompts": {
+          "development": `Focus on ${answers.priorities || 'user experience'} for ${answers.primaryUsers}`,
+          "testing": `Emphasize ${answers.needsOffline ? 'offline functionality and ' : ''}${answers.needsRealtime ? 'real-time features and ' : ''}core functionality`,
+          "deployment": `Optimize for ${answers.devices.join(' and ')} usage`
         }
       }
     };
@@ -119,6 +236,18 @@ class VibeProjectGenerator {
   estimateHours(complexity) {
     const estimates = { simple: 8, moderate: 24, complex: 48 };
     return estimates[complexity] || 16;
+  }
+
+  generateConstraints(answers) {
+    const constraints = [];
+
+    if (answers.needsOffline) constraints.push('Must work offline');
+    if (answers.needsRealtime) constraints.push('Requires real-time updates');
+    if (answers.devices.includes('mobile')) constraints.push('Must be mobile-friendly');
+    if (answers.technicalLevel === 'beginner') constraints.push('Keep interface simple and intuitive');
+    if (answers.usageFrequency === 'daily') constraints.push('Optimize for frequent use and efficiency');
+
+    return constraints.length > 0 ? constraints.join(', ') : 'Standard web application constraints';
   }
 
   saveConfig(config) {
@@ -139,7 +268,10 @@ class VibeProjectGenerator {
 }
 
 // CLI usage
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
+                     process.argv[1].endsWith('project-generator.js');
+
+if (isMainModule) {
   const generator = new VibeProjectGenerator();
   generator.generateFromQuestionnaire().catch(console.error);
 }

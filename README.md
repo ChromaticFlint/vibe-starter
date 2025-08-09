@@ -53,9 +53,16 @@ npm run pre-commit
 ### 2. Plan Your Project
 
 **🤖 AI-Optimized Approach (Recommended):**
-1. **Generate project config**: Run `npm run generate` for interactive setup
+
+**Quick Setup (5 questions, 2 minutes):**
+1. **Quick config**: Run `npm run setup` for essential project info
 2. **AI gets instant context**: All project info in machine-readable format
 3. **Set up git hooks**: Run `./setup-git-hooks.sh` (Linux/Mac) or `setup-git-hooks.bat` (Windows)
+
+**Full Setup (comprehensive, 5-10 minutes):**
+1. **Complete config**: Run `npm run generate` for detailed interactive setup
+2. **Advanced AI context**: Comprehensive project specification
+3. **Set up git hooks**: Run setup scripts to enforce testing
 
 **📝 Traditional Approach:**
 1. **Fill out questionnaire**: Use `project-planning-questionnaire.md` to define your project
@@ -228,7 +235,10 @@ This ensures no code gets committed without passing all tests!
 
 ### Machine-Readable Project Configuration
 ```bash
-# Generate structured project config
+# Quick setup (5 questions, 2 minutes)
+npm run setup
+
+# Full setup (comprehensive questionnaire)
 npm run generate
 
 # AI can instantly parse project context

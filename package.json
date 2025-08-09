@@ -15,7 +15,9 @@
     "test:performance": "vitest run src/__tests__/Performance.test.tsx",
     "test:health": "vitest run src/__tests__/AppHealth.test.tsx",
     "pre-commit": "npm run test && npm run lint && npm run build",
-    "check": "npm run pre-commit"
+    "check": "npm run pre-commit",
+    "generate": "node .vibe/project-generator.js",
+    "ai:context": "node -e \"const config = require('./vibe-project.config.json'); console.log(JSON.stringify(config, null, 2))\""
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,111 @@
+{
+  "$schema": "./schemas/vibe-project.schema.json",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "[PROJECT_NAME]",
+    "type": "web-app|game|tool|dashboard|api|mobile-app",
+    "domain": "productivity|entertainment|education|ecommerce|healthcare|finance",
+    "description": "[ONE_SENTENCE_DESCRIPTION]",
+    "status": "planning|development|testing|production",
+    "created": "2025-01-01",
+    "lastUpdated": "2025-01-01"
+  },
+  "audience": {
+    "primary": {
+      "demographics": "[DESCRIPTION]",
+      "technicalLevel": "beginner|intermediate|expert",
+      "devices": ["desktop", "mobile", "tablet"],
+      "usageFrequency": "daily|weekly|monthly|occasional"
+    },
+    "secondary": {
+      "demographics": "[DESCRIPTION]",
+      "technicalLevel": "beginner|intermediate|expert"
+    }
+  },
+  "features": {
+    "core": [
+      {
+        "id": "feature-1",
+        "name": "[FEATURE_NAME]",
+        "description": "[DESCRIPTION]",
+        "priority": "critical|high|medium|low",
+        "complexity": "simple|moderate|complex",
+        "estimatedHours": 0
+      }
+    ],
+    "secondary": [
+      {
+        "id": "feature-a",
+        "name": "[FEATURE_NAME]",
+        "description": "[DESCRIPTION]",
+        "priority": "high|medium|low",
+        "complexity": "simple|moderate|complex",
+        "estimatedHours": 0
+      }
+    ]
+  },
+  "technical": {
+    "stack": {
+      "frontend": "react|vue|svelte|vanilla",
+      "backend": "node|python|go|none",
+      "database": "postgresql|mongodb|sqlite|none",
+      "styling": "tailwind|styled-components|css-modules",
+      "stateManagement": "zustand|redux|context|none"
+    },
+    "requirements": {
+      "authentication": true,
+      "realtime": false,
+      "offline": false,
+      "mobile": true,
+      "pwa": false,
+      "seo": true
+    },
+    "integrations": [
+      {
+        "service": "[SERVICE_NAME]",
+        "purpose": "[PURPOSE]",
+        "required": true
+      }
+    ]
+  },
+  "testing": {
+    "coverage": {
+      "target": 80,
+      "critical": 95
+    },
+    "types": [
+      "unit",
+      "integration",
+      "e2e",
+      "accessibility",
+      "performance",
+      "security"
+    ],
+    "automation": {
+      "preCommit": true,
+      "ci": true,
+      "deployment": true
+    }
+  },
+  "deployment": {
+    "platform": "vercel|netlify|aws|docker",
+    "domain": "[CUSTOM_DOMAIN]",
+    "environment": {
+      "staging": "[STAGING_URL]",
+      "production": "[PRODUCTION_URL]"
+    }
+  },
+  "ai": {
+    "context": {
+      "businessLogic": "[KEY_BUSINESS_RULES]",
+      "userWorkflows": "[TYPICAL_USER_JOURNEYS]",
+      "constraints": "[TECHNICAL_OR_BUSINESS_CONSTRAINTS]",
+      "priorities": "[WHAT_MATTERS_MOST]"
+    },
+    "prompts": {
+      "development": "[SPECIFIC_DEVELOPMENT_GUIDANCE]",
+      "testing": "[TESTING_FOCUS_AREAS]",
+      "deployment": "[DEPLOYMENT_CONSIDERATIONS]"
+    }
+  }
+}
